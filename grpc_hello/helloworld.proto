@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package helloworld;
+
+// 1. 定义 gRPC 服务
+service Greeter {
+  // 定义一个 RPC 方法，接受 HelloRequest，返回 HelloReply
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+// 2. 定义请求消息
+message HelloRequest {
+  string name = 1;
+}
+
+// 3. 定义响应消息
+message HelloReply {
+  string message = 1;
+}
