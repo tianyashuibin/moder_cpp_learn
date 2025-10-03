@@ -1,0 +1,22 @@
+# 手动编译proto文件，生成相关的grpc.pb.h、grpc.pb.cc、pb.h、pb.cc 四个文件
+# 编译命令如下
+
+
+GRPC_CPP_PLUGIN=$(brew --prefix grpc)/bin/grpc_cpp_plugin
+echo "gRPC C++ 插件路径: $GRPC_CPP_PLUGIN"
+
+# 假设你的文件在当前目录
+PROTO_FILE=helloworld.proto
+
+protoc --cpp_out=. \
+       --grpc_out=. \
+       --plugin=protoc-gen-grpc="$GRPC_CPP_PLUGIN" \
+       "$PROTO_FILE"
+
+
+# vscode 解决代码中的红色波浪线问题
+# 打开CMakeLists.txt文件
+# vscode会自动弹出来cmake提示
+# 配置clang编译器之后，会自动生成编译配置
+# 进行build，之后就不会有红色波浪线了
+
