@@ -16,6 +16,9 @@ set(GENERATED_SRCS
 set(CLIENT_SRCS greeter_client.cc ${GENERATED_SRCS})
 set(SERVER_SRCS greeter_server.cc ${GENERATED_SRCS})
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # 1. 编译客户端可执行文件
 add_executable(greeter_client ${CLIENT_SRCS})
 target_link_libraries(greeter_client

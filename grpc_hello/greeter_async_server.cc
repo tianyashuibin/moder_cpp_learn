@@ -10,6 +10,8 @@
 
 #include <grpcpp/grpcpp.h>
 #include "helloworld.grpc.pb.h"
+#include <grpc/support/log.h>
+#include <cassert>
 
 using grpc::Server;
 using grpc::ServerAsyncResponseWriter;
@@ -159,8 +161,7 @@ private:
                     responder_.Finish(reply_, Status::OK, this); 
                 });
             } else { // status_ == FINISH
-                // 状态机第三步：发送回复完毕，可以安全删除对象
-                GPR_ASSERT(status_ == FINISH);
+                assert(status_ == FINISH);
                 delete this;
             }
         }
@@ -187,7 +188,11 @@ private:
         bool ok;
         while (cq->Next(&tag, &ok)) { // 阻塞等待下一个事件
             CallData* call = static_cast<CallData*>(tag);
-            GPR_ASSERT(ok);
+            if (!ok) {
+                // RPC was cancelled or the server is shutting down — clean up and skip.
+                delete call;
+                continue;
+            }
 
             // 事件到达，继续处理状态机
             call->Proceed(); 
