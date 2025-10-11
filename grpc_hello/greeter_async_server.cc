@@ -17,7 +17,7 @@ using grpc::Server;
 using grpc::ServerAsyncResponseWriter;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
-using grpc::CompletionQueue;
+using grpc::ServerCompletionQueue;
 using grpc::Status;
 using helloworld::Greeter;
 using helloworld::HelloRequest;
@@ -131,7 +131,7 @@ private:
     // 封装 RPC 调用的状态机
     class CallData {
     public:
-        CallData(Greeter::AsyncService* service, CompletionQueue* cq, ThreadPool& pool)
+        CallData(Greeter::AsyncService* service, ServerCompletionQueue* cq, ThreadPool& pool)
             : service_(service), cq_(cq), responder_(&ctx_), status_(CREATE), business_thread_pool_(pool) {
             // 一旦创建，立即启动第一个 RPC 监听 (RequestSayHello)
             Proceed();
@@ -168,7 +168,7 @@ private:
 
     private:
         Greeter::AsyncService* service_;
-        CompletionQueue* cq_;
+        ServerCompletionQueue* cq_;
         ServerContext ctx_;
         HelloRequest request_;
         HelloReply reply_;
@@ -181,7 +181,7 @@ private:
     };
 
     // gRPC I/O 线程的循环函数
-    void HandleRpcs(CompletionQueue* cq) {
+    void HandleRpcs(ServerCompletionQueue* cq) {
         // 监听第一个请求
         new CallData(&service_, cq, business_thread_pool_);
         void* tag; 
@@ -201,7 +201,7 @@ private:
 
     std::unique_ptr<Server> server_;
     Greeter::AsyncService service_;
-    std::vector<std::unique_ptr<CompletionQueue>> cqs_;
+    std::vector<std::unique_ptr<ServerCompletionQueue>> cqs_;
     std::vector<std::thread> grpc_threads_;
     ThreadPool business_thread_pool_;
 };
