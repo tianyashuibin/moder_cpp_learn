@@ -1,3 +1,8 @@
 build
 build/*
 
+.idea/*
+*/.idea
+
+grpc_hello/helloworld.pb.h
+grpc_hello/helloworld.pb.cc
